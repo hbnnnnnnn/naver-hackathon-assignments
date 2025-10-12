@@ -141,7 +141,7 @@ function Game({ mode, setMode }) {
     <div className="main">
       <h2 className="result">Winner is: {winner ? winner : "N/N"}</h2>
       <div className="game">
-        <span className="player">Next player is: {xIsNext ? "Player X" : "AI O"}</span>
+        <span className="player">Next player is: {xIsNext ? "Player" : "AI"}</span>
         <Board squares={squares} handleClick={handleClick} />
       </div>
       <button onClick={handleRestart} className="restart-btn">

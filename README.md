@@ -1,52 +1,82 @@
----
-author: Dua Tran
-title: Rock-Paper-Scissor game
-id: tic-tac-toe_game_trancaodua
----
+# Tic Tac Toe Game with AI
 
-# Tic Tac Toe Game
+A modern Tic Tac Toe game built with React that features AI opponents with different difficulty levels. Play against an intelligent computer opponent that uses the minimax algorithm for strategic gameplay.
 
+## Features
 
+- **Single Player Mode**: Play against AI opponents
+- **Two Difficulty Levels**:
+  - **Easy**: AI makes random moves
+  - **Hard**: AI uses minimax algorithm for optimal play
+- **Clean UI**: Simple, modern interface with smooth interactions
+- **Real-time Game Status**: Shows current player turn and game results
+- **Game Reset**: Start a new game at any time
+- **Responsive Design**: Works on desktop and mobile devices
 
-Props are one of the most basic and important properties in React.
-The purpose of this project is to practice our skills with React props.
+## How to Play
 
-Let's create a mini "Tic Tac Toe" game to play with family and friends.
+1. Choose your difficulty level (Easy or Hard)
+2. You play as "X" and the AI plays as "O"
+3. Click on any empty square to make your move
+4. The AI will automatically make its move after yours
+5. Get three in a row (horizontally, vertically, or diagonally) to win
+6. Click "New Game" to restart and return to the menu
 
-| ![](https://i.ibb.co/7kxyMb4/Screenshot-from-2022-05-12-01-32-13.png) |
-| :-------------------------------------------------------------------: |
-|                      _ Tic Tac Toe_                      |
+## Game Rules
 
-[Go to demo website !](https://tic-tac-toe-game-trancaodua.netlify.app/)
+- Players alternate turns placing X's and O's on a 3x3 grid
+- The first player to get 3 of their marks in a row wins
+- If all 9 squares are filled and no player has 3 in a row, the game is a draw
 
-## User Story
+## Technology Stack
 
-- Has two player "X" and "O".
-- Every player turns tick "X" or "O" on square.
-- Player has 3 ("X" or "O") consecutive is winner.
-- Click "Restart" to restart game.
-- :rocket: Storing a history of moves.
-- :rocket::rocket::rocket: Player can undo move.
+- **React**: Frontend framework
+- **CSS3**: Styling and animations
+- **Minimax Algorithm**: AI decision making for hard mode
 
-## Requirement
+## Installation and Setup
 
-Fork this [repo](https://github.com/trancaodua/tic-tac-toe-game) and read through the files.
-Often time , developers are required to work with an existing codebase and improve upon. This is one of that time. 
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/hbnnnnnnn/naver-hackathon-minimax.git
+   ```
 
-Repositories has 3 branch:
-- Requirements: Has requirements. You will code on this branch.
-- Solution: Has answers of requirements.
-- Advance solution: Has :rocket: answers of requirements.
+2. Navigate to the project directory:
+   ```bash
+   cd naver-hackathon-minimax
+   ```
 
-Guide checkout ````requirements```` branch to code:
-- Step 1: Clone repositories. Run: ````git clone https://github.com/trancaodua/tic-tac-toe-game.git````
-- Step 2: Checkout requirement brank to do. Run: ````git checkout requirements````
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-Guide checkout ````solution```` branch to check answer:
-- Step 1: Checkout solution brank to do. Run: ````git checkout solution````
+4. Start the development server:
+   ```bash
+   npm start
+   ```
 
-Guide checkout ````advance_solution```` brank to check :rocket: answer:
-- Step 1: Checkout solution brank to do. Run: ````git checkout advance_solution````
+5. Open your browser and visit `http://localhost:3000`
 
-You should only code in the designinated area.
-Using the VSC search function for "Your code here", you will see a list of all the placces that required your attention.
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── Board.js      # Game board component
+│   ├── Game.js       # Main game logic and state management
+│   ├── Menu.js       # Difficulty selection menu
+│   └── Square.js     # Individual square component
+├── App.js            # Main app component
+├── App.css           # Styling
+└── index.js          # React entry point
+```
+
+## AI Implementation
+
+The AI uses different strategies based on difficulty:
+
+- **Easy Mode**: Makes random moves from available squares
+- **Hard Mode**: Implements the minimax algorithm to find optimal moves, making it nearly impossible to beat
+
+The minimax algorithm evaluates all possible future game states to choose the move that maximizes the AI's chances of winning while minimizing the player's chances.

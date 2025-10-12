@@ -1,9 +1,14 @@
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   margin: 0;
+  background: #f5f7fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
 }
 
 .container {
@@ -12,18 +17,20 @@ body {
   flex-direction: column;
   justify-content: center;
   min-height: 100vh;
+  padding: 20px;
 }
 
 .main {
-  background-color: #e0e9f1;
-  border-radius: 5px;
-  box-shadow: 2px 2px 7px 1px rgb(184 197 206 / 70%);
-  color: #000;
-  gap: 20px;
-  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: #333;
+  gap: 30px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
-  min-width: 300px;
+  min-width: 400px;
+  max-width: 500px;
   align-items: center;
 }
 
@@ -32,83 +39,99 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 20px;
 }
 
 .result {
-  background-color: #20b7f6;
-  border-radius: 5px;
+  background: #4a90e2;
+  border-radius: 8px;
   color: #fff;
-  font-size: 25px;
-  font-weight: 700;
-  margin: 0 10px;
-  padding: 5px;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  padding: 15px 25px;
   text-align: center;
+  min-width: 200px;
 }
 
 .player {
-  font-weight: bold;
+  font-weight: 600;
   margin: 0;
-  grid-column-end: 3;
-  grid-column-start: 1;
+  font-size: 18px;
+  color: #666;
+  text-align: center;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.board-row {
+  display: contents;
 }
 
 .square {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-  font-size: 24px;
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 36px;
   font-weight: bold;
-  line-height: 40px;
-  height: 40px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
-  text-align: center;
-  width: 40px;
-  text-shadow: 1px 2px 2px #ce5937;
+  height: 80px;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: all 0.2s ease;
+  color: #333;
+}
+
+.square:hover {
+  background: #f8f9fa;
+  border-color: #4a90e2;
 }
 
 .square:focus {
   outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
-.board-row:after {
-  clear: both;
-  content: "";
-  display: table;
+.square-content {
+  display: block;
 }
 
-.history {
-  border: 1px solid #20b7f6;
-  border-radius: 5px;
-  padding: 10px;
+.square-x {
+  color: #dc3545;
 }
 
-.history h4 {
-  text-align: center;
-  margin: 0;
-}
-
-.history ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  font-size: 14px;
-  text-align: center;
-}
-
-.history button {
-  border: 1px solid #20b7f6;
-  margin: 2px;
-  cursor: pointer;
-  border-radius: 5px;
+.square-o {
+  color: #007bff;
 }
 
 .restart-btn {
+  background: #dc3545;
+  border: none;
+  border-radius: 6px;
+  color: white;
   cursor: pointer;
-  border: 1px solid #3787ce;
-  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 24px;
+  transition: background-color 0.2s ease;
+}
+
+.restart-btn:hover {
+  background: #c82333;
 }
 
 .menu {
@@ -116,31 +139,99 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  background-color: #e0e9f1;
-  padding: 100px;
+  gap: 24px;
+  background: white;
+  padding: 60px 80px;
   border-radius: 10px;
-  box-shadow: 2px 2px 7px 1px rgb(184 197 206 / 70%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.menu h2 {
+  color: #666;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 10px;
 }
 
 .menu-button {
-  background-color: #20b7f6;
+  background: #4a90e2;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   color: white;
   cursor: pointer;
   font-size: 18px;
-  font-weight: bold;
-  padding: 10px 20px;
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  padding: 12px 32px;
+  transition: background-color 0.2s ease;
+  min-width: 140px;
 }
 
 .menu-button:hover {
-  background-color: #1a8bb5;
+  background: #357abd;
 }
 
 .h1 {
-  font-size: 36px;
-  margin-bottom: 20px;
-  color: white;
+  font-size: 48px;
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: 700;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .main {
+    min-width: 320px;
+    max-width: 90vw;
+    padding: 30px 20px;
+  }
+  
+  .menu {
+    padding: 40px 30px;
+  }
+  
+  .h1 {
+    font-size: 36px;
+  }
+  
+  .square {
+    height: 70px;
+    width: 70px;
+    font-size: 32px;
+  }
+  
+  .result {
+    font-size: 20px;
+    padding: 12px 20px;
+  }
+  
+  .player {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .square {
+    height: 60px;
+    width: 60px;
+    font-size: 28px;
+  }
+  
+  .h1 {
+    font-size: 30px;
+  }
+  
+  .menu-button {
+    padding: 15px 30px;
+    font-size: 16px;
+  }
+  
+  .result {
+    font-size: 18px;
+  }
+}
+
