@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Board from "./Board";
+import Menu from "./Menu";
 
 const calculateWinner = (squares) => {
   const lines = [
@@ -60,7 +61,16 @@ const minimax = (board, depth, isMaximizing) => {
   }
 };
 
-const getBestMove = (board) => {
+const randomMove = (board) => {
+  const emptyIndices = board
+    .map((val, idx) => (val === null ? idx : null))
+    .filter((val) => val !== null);
+  const randomIndex =
+    emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+  return randomIndex;
+};
+
+const getBestMove = (board, mode) => {
   let bestScore = -Infinity;
   let move = null;
 
@@ -68,6 +78,10 @@ const getBestMove = (board) => {
     if (!board[i]) {          // only consider empty cells
       const newBoard = [...board];
       newBoard[i] = "O";      // simulate AI move
+      if (mode === "Easy") {
+        return randomMove(board); // return random move in Easy mode
+      }
+      // In Hard mode, use minimax to find the best move
       const score = minimax(newBoard, 0, false); // next turn is player
       if (score > bestScore) {
         bestScore = score;
@@ -80,14 +94,15 @@ const getBestMove = (board) => {
 };
 
 
-function Game() {
+
+function Game({ mode, setMode }) {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
   const [winner, setWinner] = useState(null);
 
   useEffect(() => {
     if (!xIsNext) {
-      const bestMove = getBestMove(squares);  // find best index
+      const bestMove = getBestMove(squares, mode);  // find best index
       if (bestMove !== null) {
         const newBoard = [...squares];
         newBoard[bestMove] = "O";
@@ -115,21 +130,22 @@ function Game() {
   };
 
   //Restart game
-  const handlRestart = () => {
+  const handleRestart = () => {
     setWinner(null);
     setXIsNext(true);
     setSquares(Array(9).fill(null));
+    setMode(null);
   };
 
   return (
     <div className="main">
       <h2 className="result">Winner is: {winner ? winner : "N/N"}</h2>
       <div className="game">
-        <span className="player">Next player is: {xIsNext ? "X" : "O"}</span>
+        <span className="player">Next player is: {xIsNext ? "Player X" : "AI O"}</span>
         <Board squares={squares} handleClick={handleClick} />
       </div>
-      <button onClick={handlRestart} className="restart-btn">
-        Restart
+      <button onClick={handleRestart} className="restart-btn">
+        New Game
       </button>
     </div>
   );

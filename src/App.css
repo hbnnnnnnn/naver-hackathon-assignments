@@ -110,3 +110,37 @@ body {
   border: 1px solid #3787ce;
   border-radius: 4px;
 }
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background-color: #e0e9f1;
+  padding: 100px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 7px 1px rgb(184 197 206 / 70%);
+}
+
+.menu-button {
+  background-color: #20b7f6;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.menu-button:hover {
+  background-color: #1a8bb5;
+}
+
+.h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+  color: white;
+}
