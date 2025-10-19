@@ -22,7 +22,6 @@ function Game() {
       case 'restart':
         setWinner(null);
         setSquares(Array(25).fill(0));
-        setStatus("Game restarted - Ready to play!");
         break;
       
       case 'update':
@@ -106,19 +105,19 @@ function Game() {
   return (
     <div className="main">
       <div className="game-header">
-        <h1>Minimax Game</h1>
+        <h1>Multiplayer Odd/Even Tic-Tac-Toe</h1>
         <div className="game-info">
           <div className="status">Status: {status}</div>
           {player && <div className="player-info">You are: <strong>{player}</strong></div>}
           {roomId !== null && <div className="room-info">Room: {roomId}</div>}
         </div>
-        {winner && <div className="winner-announcement">🎉 {winner} Wins! 🎉</div>}
+        {winner && <div className="winner-announcement">{winner} Wins!</div>}
       </div>
       <div className="game">
         <Board squares={squares} handleClick={handleClick} />
       </div>
       <button onClick={handleRestart} className="restart-btn">
-        Restart Game
+        New Game
       </button>
     </div>
   );

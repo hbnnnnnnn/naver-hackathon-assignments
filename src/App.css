@@ -240,3 +240,52 @@ body {
   background-color: #e8f5e8;
   color: #388e3c;
 }
+
+/* Game header styles */
+.game-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-header h1 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.game-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.status, .player-info, .room-info, .winner-announcement {
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  color: #333;
+  border: 1px solid #dee2e6;
+}
+
+.status {
+  border-left: 3px solid #20b7f6;
+}
+
+.player-info {
+  border-left: 3px solid #28a745;
+}
+
+.room-info {
+  font-size: 14px;
+  color: #6c757d;
+  border-left: 3px solid #6c757d;
+}
+
+.winner-announcement {
+  border-left: 3px solid #ffc107;
+  background-color: #fff3cd;
+  font-weight: 600;
+  margin-top: 8px;
+}
