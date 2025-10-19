@@ -1,123 +1,185 @@
-# Week 2 Assignment: Multiplayer Odd/Even Tic-Tac-Toe
+# Multiplayer Odd/Even Tic-Tac-Toe
 
-A real-time multiplayer game demonstrating distributed systems concepts like server authority, operational transforms, and WebSocket communication.
+A real-time multiplayer game demonstrating distributed systems concepts with WebSocket communication, server authority, and operational transforms.
 
 ## 🎮 Game Rules
 
 - **5x5 board** with all squares starting at 0
-- **Odd Player** wins when any row, column, or diagonal has all odd numbers
-- **Even Player** wins when any row, column, or diagonal has all even numbers  
+- **Odd Player** wins when any row, column, or diagonal has all odd numbers (1, 3, 5, 7, 9...)
+- **Even Player** wins when any row, column, or diagonal has all even numbers (2, 4, 6, 8, 10...)
 - **Click any square** to increment its number by 1
-- **No turns** - both players can click any square at any time!
-- **Strategy**: Fight over the same squares to keep them odd/even
+- **No turns** - both players can click simultaneously and race for control!
+- **Strategy**: Fight over the same squares to keep them in your favor (odd/even)
 
-## 🎯 Learning Objectives
+## 🚀 Features
 
-This assignment teaches core distributed systems concepts:
+### ✅ **Implemented Features:**
 
-1. **Server Authority** - Server maintains the single source of truth
-2. **Operational Transforms** - Send operations, not states, to handle concurrent actions
-3. **WebSocket Communication** - Real-time bidirectional updates
+- **Real-time Multiplayer**: WebSocket-based communication for instant updates
+- **Server Authority**: Server maintains game state and validates all moves
+- **Operational Transforms**: Sends individual increment operations instead of full state
+- **Room Management**: Automatic room assignment supporting multiple concurrent games
+- **Connection Status**: Real-time status updates (Connecting, Connected, Waiting, Ready, etc.)
+- **Clean UI**: Modern interface with consistent design and color-coded feedback
+- **Win Detection**: Server-side validation for all winning conditions
+- **Game Restart**: Complete game reset functionality
+- **Error Handling**: Connection error detection and user feedback
 
-## 🚀 Current Implementation Status
+### 🎯 **Game Flow:**
 
-### ✅ **Completed Features:**
-
-- **5x5 Game Board**: Properly displays 25 squares in a grid
-- **Number Increment**: Clicking squares increments values by 1
-- **Win Detection**: Correctly checks all rows, columns, and diagonals
-- **Player Assignment**: First player becomes Odd, second becomes Even
-- **WebSocket Connection**: Real-time communication between client and server
-- **Game Restart**: Ability to reset the game board
-- **Room System**: Multiple games can run simultaneously
-
-### ⚠️ **Areas for Improvement:**
-
-- **Server Authority**: Currently client updates UI before server confirmation
-- **Operational Transforms**: Sending full board state instead of operations
-- **Connection Status**: No "Connected/Waiting for opponent" display
-- **Game Over Handling**: Win detection only on client, not server-side
-- **Message Protocol**: Custom format instead of assignment-specified protocol
+1. **Connection**: Client connects to WebSocket server
+2. **Room Assignment**: Server assigns players to available rooms (max 2 per room)
+3. **Player Roles**: First player becomes "Odd", second becomes "Even"
+4. **Gameplay**: Both players increment squares simultaneously
+5. **Win Detection**: Server checks for winning conditions after each move
+6. **Game Over**: Winner announced, option to restart
 
 ## 🛠 How to Run
+
+### Prerequisites:
+- Node.js installed
+- Two browser windows/tabs for testing multiplayer
 
 ### Start the Server:
 ```bash
 cd server
 node index.js
+# Server runs on ws://localhost:8080
 ```
 
 ### Start the Client:
 ```bash
 npm start
+# Client runs on http://localhost:3000
 ```
 
 ### Play:
-1. Open two browser windows to `http://localhost:3000`
-2. First player becomes "Odd", second becomes "Even"
-3. Click squares to increment numbers
-4. First to get 5 odd or even numbers in a line wins!
+1. Open two browser windows/tabs to `http://localhost:3000`
+2. Both players will be automatically connected and assigned roles
+3. Wait for "Both players connected - Game ready!" status
+4. Click squares to increment numbers and race for winning lines!
+5. Use "New Game" button to restart when ready
 
 ## 📁 Project Structure
 
 ```
 ├── src/
 │   ├── components/
-│   │   ├── Game.js       # Main game logic and WebSocket handling
-│   │   ├── Board.js      # 5x5 grid layout
-│   │   └── Square.js     # Individual clickable squares
-│   └── App.js           # Root component
+│   │   ├── Game.js       # Main game logic, WebSocket handling, UI state
+│   │   ├── Board.js      # 5x5 grid layout component
+│   │   └── Square.js     # Individual clickable squares with hover effects
+│   ├── App.js           # Root component
+│   └── App.css          # Styling with consistent design system
 ├── server/
-│   └── index.js         # WebSocket server with room management
-└── package.json         # Dependencies
+│   └── index.js         # WebSocket server with room management & game logic
+└── package.json         # Dependencies and scripts
 ```
 
 ## 🔧 Technical Architecture
 
-### Client-Server Communication:
+### WebSocket Message Protocol:
 
-**Current Message Format:**
+**Client → Server Messages:**
 ```javascript
-// Client -> Server (move)
-{
-  type: 'move',
-  data: {
-    roomId: '123',
-    squares: [0,1,2,...], // full board state
-    nextPlayer: 'Even'
-  }
+// Join game
+{ type: 'prepare' }
+
+// Make move
+{ 
+  type: 'increment', 
+  data: { roomId: 0, square: 12 } 
 }
 
-// Server -> Client (update)
-{
-  type: 'display',
-  data: {
-    squares: [0,1,2,...] // full board state
-  }
+// Restart game
+{ 
+  type: 'restart', 
+  data: { roomId: 0 } 
 }
 ```
 
-### Room Management:
-- Server automatically assigns players to rooms
-- Maximum 2 players per room
-- New room created when current room is full
+**Server → Client Messages:**
+```javascript
+// Player assignment
+{ 
+  type: 'start', 
+  data: { player: 'Odd', roomId: 0 } 
+}
 
-## 🎯 Next Steps for Full Assignment Compliance
+// Both players ready
+{ 
+  type: 'ready', 
+  data: { message: 'Both players connected!' } 
+}
 
-To meet all assignment requirements, consider implementing:
+// Move update
+{ 
+  type: 'update', 
+  data: { square: 12, value: 3 } 
+}
 
-1. **True Server Authority**: Wait for server confirmation before updating UI
-2. **Operational Transforms**: Send `{type: 'INCREMENT', square: 12}` instead of full state
-3. **Connection Status UI**: Show "Connected", "Disconnected", "Waiting for opponent"
-4. **Server-side Win Detection**: Move win logic to server
-5. **Assignment Message Protocol**: Match the specified WebSocket message format
+// Game over
+{ 
+  type: 'gameover', 
+  data: { winner: 'Odd' } 
+}
 
-## 🧠 Key Distributed Systems Concepts Demonstrated
+// Game restart
+{ 
+  type: 'restart', 
+  data: { board: [0,0,0...], winner: null } 
+}
+```
 
-- **Consistency**: Server as single source of truth prevents conflicting states
-- **Concurrency**: Multiple players can act simultaneously without data loss
-- **Real-time Communication**: WebSocket enables instant updates across clients
-- **State Synchronization**: All clients see the same game state
+### Server Architecture:
+- **Room Management**: Automatic room creation and player assignment
+- **State Management**: Server maintains authoritative game state
+- **Win Detection**: Server-side validation using optimized line checking
+- **Concurrent Handling**: Supports multiple simultaneous games
+
+### Client Architecture:
+- **React Hooks**: useState, useEffect, useRef, useCallback for state management
+- **WebSocket Integration**: Real-time bidirectional communication
+- **Status Management**: Connection and game state tracking
+- **UI Updates**: Responsive interface with immediate visual feedback
+
+## 🎯 Distributed Systems Concepts Demonstrated
+
+1. **Server Authority**: 
+   - Server maintains single source of truth
+   - All moves validated server-side
+   - Prevents inconsistent states across clients
+
+2. **Operational Transforms**:
+   - Sends atomic operations (`increment square X`) instead of full state
+   - Enables concurrent modifications without conflicts
+   - Optimizes network traffic
+
+3. **Real-time Communication**:
+   - WebSocket for low-latency bidirectional updates
+   - Immediate feedback for all connected players
+   - Connection state management
+
+4. **State Synchronization**:
+   - All clients receive identical game state updates
+   - Server broadcasts changes to all room participants
+   - Consistent game experience across all players
+
+## 🎨 UI/UX Features
+
+- **Status Indicators**: Color-coded status messages with consistent styling
+- **Player Identification**: Clear display of player role (Odd/Even)
+- **Room Information**: Room ID display for debugging/reference
+- **Winner Announcement**: Prominent but consistent winner display
+- **Visual Feedback**: Hover effects and color-coding for odd/even numbers
+- **Responsive Design**: Clean, modern interface that works across devices
+
+## 🧠 Technical Highlights
+
+- **Efficient Win Detection**: O(1) win checking using predefined line arrays
+- **Memory Management**: Proper WebSocket cleanup and connection handling
+- **Error Recovery**: Connection error detection and user notification
+- **Scalable Architecture**: Room-based system supports unlimited concurrent games
+- **Type Safety**: Consistent message protocol with proper data validation
 
 # Tic Tac Toe Game
 
