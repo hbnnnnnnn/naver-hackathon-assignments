@@ -1,134 +1,138 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Board from "./Board";
 
-const calculateWinner = (squares) => {
+const calculateWinner = (board) => {
   const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
+    // rows
+    [0, 1, 2, 3, 4],
+    [5, 6, 7, 8, 9],
+    [10, 11, 12, 13, 14],
+    [15, 16, 17, 18, 19],
+    [20, 21, 22, 23, 24],
+    // columns
+    [0, 5, 10, 15, 20],
+    [1, 6, 11, 16, 21],
+    [2, 7, 12, 17, 22],
+    [3, 8, 13, 18, 23],
+    [4, 9, 14, 19, 24],
+    // diagonals
+    [0, 6, 12, 18, 24],
+    [4, 8, 12, 16, 20],
   ];
-  for (const [a, b, c] of lines) {
-    if (
-      squares[a] &&
-      squares[a] === squares[b] &&
-      squares[a] === squares[c]
-    ) {
-      return squares[a];
+
+  for (const line of lines) {
+    const values = line.map((i) => board[i]);
+    if (values.every((v) => v !== 0 && v % 2 === 1)) {
+      return 'Odd';
+    }
+    if (values.every((v) => v !== 0 && v % 2 === 0)) {
+      return 'Even';
     }
   }
 
-  if (!squares.includes(null)) {
+  if (board.every((v) => v !== 0)) {
     return 'Draw';
   }
 
   return null;
 };
 
-const minimax = (board, depth, isMaximizing) => {
-  const winner = calculateWinner(board);
-  if (winner === "O") return 10 - depth;
-  if (winner === "X") return -10 + depth;
-  if (winner === "Draw") return 0;
-
-  if (isMaximizing) { // AI turn
-    let maxEval = -Infinity;
-    for (let i = 0; i < board.length; i++) {
-      if (!board[i]) {
-        const newBoard = [...board];
-        newBoard[i] = "O";
-        const evalScore = minimax(newBoard, depth + 1, false);
-        maxEval = Math.max(maxEval, evalScore);
-      }
-    }
-    return maxEval;
-  } else { // Player turn
-    let minEval = Infinity;
-    for (let i = 0; i < board.length; i++) {
-      if (!board[i]) {
-        const newBoard = [...board];
-        newBoard[i] = "X";
-        const evalScore = minimax(newBoard, depth + 1, true);
-        minEval = Math.min(minEval, evalScore);
-      }
-    }
-    return minEval;
-  }
-};
-
-const getBestMove = (board) => {
-  let bestScore = -Infinity;
-  let move = null;
-
-  for (let i = 0; i < board.length; i++) {
-    if (!board[i]) {          // only consider empty cells
-      const newBoard = [...board];
-      newBoard[i] = "O";      // simulate AI move
-      const score = minimax(newBoard, 0, false); // next turn is player
-      if (score > bestScore) {
-        bestScore = score;
-        move = i;
-      }
-    }
-  }
-
-  return move; // return the best index for AI to play
-};
-
-
 function Game() {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
+  const [squares, setSquares] = useState(Array(25).fill(0));
+  const [player, setPlayer] = useState(null);
   const [winner, setWinner] = useState(null);
+  const [roomId, setRoomId] = useState(null)
+  const wsRef = useRef(null);
+
+  const handleOnMessage = useCallback((event) => {
+    const { type, data } = JSON.parse(event.data);
+  
+    console.log('player', player);
+    switch(type) {
+      case 'start':
+        setPlayer(data.player);
+        setRoomId(data.roomId)
+        
+        break;
+      case 'display':
+        setSquares(data.squares);
+        break;
+      
+      case 'restart':
+        setWinner(null);
+        setSquares(Array(25).fill(0));
+        break;
+      default:
+        break;
+    }
+  }, [player]);
 
   useEffect(() => {
-    if (!xIsNext) {
-      const bestMove = getBestMove(squares);  // find best index
-      if (bestMove !== null) {
-        const newBoard = [...squares];
-        newBoard[bestMove] = "O";
-        setSquares(newBoard);
-        setXIsNext(!xIsNext);
-      }
+    if (wsRef.current) {
+      return;
     }
-  }, [xIsNext]);
 
-  //Declaring a Winner
+    const ws = new WebSocket('ws://localhost:8080');
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        type: 'prepare'
+      }));
+    };
+
+    wsRef.current.onmessage = handleOnMessage;
+
+    return () => {
+      console.log('close');
+      ws.close();
+      wsRef.current = null;
+    }
+
+  }, []);
+
   useEffect(() => {
     setWinner(calculateWinner(squares));
   }, [squares]);
 
 
-  //Handle player
   const handleClick = (i) => {
-    if (winner || squares[i]) {
+    if (winner) {
       return;
     }
 
-    squares[i] = 'X';
-    setXIsNext(!xIsNext);
+    squares[i] += 1;
     setSquares([...squares]);
+
+    wsRef.current.send(JSON.stringify({
+      data: {
+        roomId,
+        squares,
+        nextPlayer: player === 'Odd' ? 'Even' : 'Odd',
+      },
+      type: 'move',
+    }));
   };
 
-  //Restart game
-  const handlRestart = () => {
+  const handleRestart = () => {
     setWinner(null);
-    setXIsNext(true);
-    setSquares(Array(9).fill(null));
+    setSquares(Array(25).fill(0));
+    wsRef.current.send(JSON.stringify({
+      type: 'restart',
+      data: {
+        roomId,
+      },
+    }));
   };
 
   return (
     <div className="main">
       <h2 className="result">Winner is: {winner ? winner : "N/N"}</h2>
+      <span>{player}</span>
       <div className="game">
-        <span className="player">Next player is: {xIsNext ? "X" : "O"}</span>
         <Board squares={squares} handleClick={handleClick} />
       </div>
-      <button onClick={handlRestart} className="restart-btn">
+      <button onClick={handleRestart} className="restart-btn">
         Restart
       </button>
     </div>
